@@ -64,10 +64,11 @@ public class MainActivity extends ActionBarActivity implements
     public ProgressDialog pDialog;
     public login newFragment;
     public aboutUs aboutFragment;
+    public bluetoothConnection bluetoothFragment;
     public Bitmap transactionImage;
     private static String DESKEY= "neduniversityofengineeringandtechnology";
-    private static String LOGIN_URL= "http://192.168.1.2:8080/android/login.php";
-    private static String TRANS_URL= "http://192.168.1.2:8080/android/transaction.php";
+    private static String LOGIN_URL= "http://192.168.1.3:8080/android/login.php";
+    private static String TRANS_URL= "http://192.168.1.3:8080/android/transaction.php";
 
     //Camera code
     private static final int CAMERA_CAPTURE_IMAGE_REQUEST_CODE = 100;
@@ -183,12 +184,12 @@ public class MainActivity extends ActionBarActivity implements
             // Otherwise, we're in the one-pane layout and must swap frags...
 
             // Create fragment and give it an argument for the selected article
-            bluetoothConnection newFragment = new bluetoothConnection();
+            bluetoothFragment = new bluetoothConnection();
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
 
             // Replace whatever is in the fragment_container view with this fragment,
             // and add the transaction to the back stack so the user can navigate back
-            transaction.replace(R.id.fragment_container, newFragment);
+            transaction.replace(R.id.fragment_container, bluetoothFragment);
             transaction.addToBackStack(null);
 
             // Commit the transaction
@@ -386,9 +387,11 @@ public class MainActivity extends ActionBarActivity implements
                             JSONObject jsonResponse = new JSONObject(response);
                             if(jsonResponse.get("success").equals("1")){
                                 Toast.makeText(getApplicationContext(),jsonResponse.getString("message"), Toast.LENGTH_LONG).show();
+                                bluetoothFragment.mAcceptThread.write(jsonResponse.getString("message").getBytes());
                             }
                             else{
                                 Toast.makeText(getApplicationContext(),jsonResponse.getString("message"), Toast.LENGTH_SHORT).show();
+                                bluetoothFragment.mAcceptThread.write(jsonResponse.getString("message").getBytes());
                             }
 
                         } catch (JSONException e) {
