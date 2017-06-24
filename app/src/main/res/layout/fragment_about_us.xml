@@ -1,0 +1,58 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+             xmlns:tools="http://schemas.android.com/tools"
+             android:layout_width="match_parent"
+             android:layout_height="match_parent"
+             android:id="@+id/aboutFragment"
+              android:orientation="vertical"
+              android:background="#404040"
+             tools:context="com.app.bluepay.aboutUs"
+    android:paddingTop="16dp">
+
+    <!-- TODO: Update blank fragment layout -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/app_name"
+        android:textSize="32dp"
+        android:textColor="#0054a6"
+        android:paddingLeft="8dp"/>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp"
+        android:textSize="16dp"
+        android:textColor="@android:color/white"
+        android:text="@string/aboutStart"/>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingLeft="24dp"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp"
+        android:textSize="18dp"
+        android:textColor="@android:color/holo_blue_light"
+        android:text="@string/names"/>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
+        android:textSize="16dp"
+        android:textColor="@android:color/white"
+        android:text="@string/aboutEnd"/>
+
+    <ImageView
+        android:id="@+id/about_logo"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:scaleX="0.5"
+        android:scaleY="0.5"
+        android:layout_weight="1"
+        android:src="@drawable/logo"
+        />
+
+
+</LinearLayout>

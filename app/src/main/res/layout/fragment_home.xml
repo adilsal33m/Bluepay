@@ -1,0 +1,59 @@
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center"
+    android:orientation="vertical"
+    android:background="#404040"
+    tools:context="com.example.adilsaleem.bluepay.com.example.adilsaleem.bluepay.Home">
+
+    <ImageView
+        android:id="@+id/logo"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:scaleX="0.7"
+        android:scaleY="0.7"
+        android:layout_weight="1"
+        android:src="@drawable/logo"
+        android:layout_centerHorizontal="true"/>
+
+
+    <Button
+        android:id="@+id/transaction"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/button_shape"
+        android:textColor="@android:color/white"
+        android:text="@string/makeTrans"
+        android:layout_marginRight="50dp"
+        android:layout_marginLeft="50dp"
+        android:enabled="false"
+        android:visibility="gone"
+        android:textSize="16dp"/>
+    <Button
+        android:id="@+id/login"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/login"
+        android:background="@drawable/button_shape"
+        android:layout_marginRight="65dp"
+        android:layout_marginLeft="65dp"
+        android:layout_marginTop="8dp"
+        android:textColor="@android:color/white"
+        android:textSize="16dp"/>
+
+    <Button
+        android:id="@+id/about"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/about"
+        android:background="@drawable/button_shape_2"
+        android:layout_marginTop="8dp"
+        android:textColor="@android:color/white"
+        android:layout_marginRight="80dp"
+        android:layout_marginLeft="80dp"
+        android:textSize="16dp"
+        android:layout_marginBottom="50dp"/>
+
+</LinearLayout>
