@@ -36,7 +36,6 @@
             android:textColor="@android:color/white"
             android:layout_marginLeft="18dp"/>
     </LinearLayout>
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -58,4 +57,12 @@
             android:layout_marginLeft="40dp"/>
     </LinearLayout>
 
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="18dp"
+        android:padding="8dp"
+        android:textAlignment="center"
+        android:id="@+id/account_info_last"
+        android:textColor="@android:color/white"/>
 </LinearLayout>

@@ -44,7 +44,7 @@ public class bluetoothConnection extends Fragment {
     private Spinner mSpinner;
     public BluetoothAdapter mBluetoothAdapter;
     public BluetoothDevice mBluetoothDevice;
-    public com.app.bluepay.ConnectThread mConnectThread;
+    public ConnectThread mConnectThread;
     public AcceptThread mAcceptThread;
     private List<BluetoothDevice> mBluetoothConnections = new ArrayList<BluetoothDevice>();
     private View rootView;

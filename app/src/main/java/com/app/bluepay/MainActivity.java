@@ -67,8 +67,8 @@ public class MainActivity extends ActionBarActivity implements
     public bluetoothConnection bluetoothFragment;
     public Bitmap transactionImage;
     private static String DESKEY= "neduniversityofengineeringandtechnology";
-    private static String LOGIN_URL= "http://192.168.1.3:8080/android/login.php";
-    private static String TRANS_URL= "http://192.168.1.3:8080/android/transaction.php";
+    private static String LOGIN_URL= "http://192.168.1.11:8080/android/login.php";
+    private static String TRANS_URL= "http://192.168.1.11:8080/android/transaction.php";
 
     //Camera code
     private static final int CAMERA_CAPTURE_IMAGE_REQUEST_CODE = 100;

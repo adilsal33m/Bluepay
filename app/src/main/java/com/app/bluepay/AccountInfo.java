@@ -28,7 +28,8 @@ public class AccountInfo extends Fragment {
 
     public TextView mUsername;
     public TextView mAmount;
-    private static String ACCOUNT_URL= "http://192.168.1.2:8080/android/account.php";
+    public TextView mLast;
+    private static String ACCOUNT_URL= "http://192.168.1.11:8080/android/account.php";
     ProgressDialog pDialog;
     getUserInterface mListener;
 
@@ -61,6 +62,7 @@ public class AccountInfo extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         mUsername = (TextView)getActivity().findViewById(R.id.account_info_username);
         mAmount = (TextView)getActivity().findViewById(R.id.account_info_amount);
+        mLast = (TextView)getActivity().findViewById(R.id.account_info_last);
         getAccountInfo();
     }
 
@@ -91,6 +93,17 @@ public class AccountInfo extends Fragment {
                             JSONObject jsonResponse = new JSONObject(response);
                             mUsername.setText(jsonResponse.getString("username"));
                             mAmount.setText("Rs."+jsonResponse.getString("amount"));
+                            JSONObject lT = new JSONObject(jsonResponse.getString("last"));
+                            if(lT.getString("sender").equals(jsonResponse.getString("username")))
+                                mLast.setText("Last Transaction: You sent "+
+                                lT.getString("receiver")+
+                                " Rs."+lT.getString("amount_sent")+
+                                " on \n"+lT.getString("date"));
+                            else
+                                mLast.setText("Last Transaction: "+
+                                        lT.getString("sender")+
+                                        " sent you Rs."+lT.getString("amount_sent")+
+                                        " on \n"+lT.getString("date"));
                         } catch (JSONException e) {
                             e.printStackTrace();
                             pDialog.hide();
