@@ -4,15 +4,14 @@
              android:layout_height="match_parent"
              android:id="@+id/account_info_fragment"
               android:orientation="vertical"
-              android:gravity="center_horizontal"
+              android:gravity="center"
               android:background="#404040"
              tools:context="com.app.bluepay.AccountInfo">
     <ImageView
-        android:layout_height="wrap_content"
+        android:layout_height="250dp"
         android:layout_width="match_parent"
-        android:scaleX="0.5"
-        android:scaleY="0.5"
-        android:layout_weight="0"
+        android:scaleX="0.75"
+        android:scaleY="0.75"
         android:src="@drawable/logo"
         />
 
@@ -21,48 +20,55 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal">
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="140sp"
             android:layout_height="wrap_content"
             android:text="@string/account_label"
             android:textColor="@android:color/white"
-            android:textSize="18dp"
+            android:textSize="18sp"
             android:padding="24dp"/>
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="24dp"
+            android:textSize="24sp"
             android:padding="8dp"
             android:id="@+id/account_info_username"
             android:textColor="@android:color/white"
-            android:layout_marginLeft="18dp"/>
+            android:background="@drawable/text_shape_2"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"/>
     </LinearLayout>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="140sp"
             android:layout_height="wrap_content"
             android:text="@string/amount"
             android:textColor="@android:color/white"
-            android:textSize="18dp"
+            android:textSize="18sp"
             android:padding="24dp"/>
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/account_info_amount"
             android:textColor="@android:color/white"
-            android:textSize="24dp"
+            android:textSize="24sp"
             android:padding="8dp"
-            android:layout_marginLeft="40dp"/>
+            android:background="@drawable/text_shape_2"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"/>
     </LinearLayout>
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textSize="18dp"
+        android:textSize="18sp"
         android:padding="8dp"
         android:textAlignment="center"
         android:id="@+id/account_info_last"
-        android:textColor="@android:color/white"/>
+        android:background="@drawable/text_shape_2"
+        android:textColor="@android:color/white"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"/>
 </LinearLayout>

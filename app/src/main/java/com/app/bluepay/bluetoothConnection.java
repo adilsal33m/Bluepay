@@ -126,7 +126,7 @@ public class bluetoothConnection extends Fragment {
                     if (mConnectButton.getText().equals("Connect")) {
                         mConnectThread = new ConnectThread(mBluetoothDevice, mBluetoothAdapter);
                         mConnectThread.registerCallback(getActivity());
-                        mConnectThread.run();
+                        mConnectThread.start();
                         try {
                             if (mConnectThread.threadIsConnected()) {
                                 JSONObject message= new JSONObject();
@@ -239,7 +239,6 @@ public class bluetoothConnection extends Fragment {
                     if(mBluetoothDevice.getBondState() == 10) {
                         if (android.os.Build.VERSION.SDK_INT >= 19)
                             mBluetoothDevice.createBond();
-
                     }
             }
 
