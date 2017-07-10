@@ -126,7 +126,7 @@ public class bluetoothConnection extends Fragment {
                     if (mConnectButton.getText().equals("Connect")) {
                         mConnectThread = new ConnectThread(mBluetoothDevice, mBluetoothAdapter);
                         mConnectThread.registerCallback(getActivity());
-                        mConnectThread.start();
+                        mConnectThread.run();
                         try {
                             if (mConnectThread.threadIsConnected()) {
                                 JSONObject message= new JSONObject();
@@ -145,7 +145,7 @@ public class bluetoothConnection extends Fragment {
                             } else if(mBluetoothDevice.getBondState()!=10)
                                 Toast.makeText(getContext(), "Connection failed", Toast.LENGTH_SHORT).show();
                         } catch (Exception e) {
-
+                            Log.d("MessageReceived",e.toString());
                         }
                     } else {
 

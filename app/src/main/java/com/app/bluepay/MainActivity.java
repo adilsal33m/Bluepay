@@ -67,8 +67,8 @@ public class MainActivity extends ActionBarActivity implements
     public bluetoothConnection bluetoothFragment;
     public Bitmap transactionImage;
     private static String DESKEY= "neduniversityofengineeringandtechnology";
-    private static String LOGIN_URL= "http://192.168.1.11:8080/android/login.php";
-    private static String TRANS_URL= "http://192.168.1.11:8080/android/transaction.php";
+    private static String LOGIN_URL= "http://192.168.1.14:8080/android/login.php";
+    private static String TRANS_URL= "http://192.168.1.14:8080/android/transaction.php";
 
     //Camera code
     private static final int CAMERA_CAPTURE_IMAGE_REQUEST_CODE = 100;
@@ -472,7 +472,6 @@ public class MainActivity extends ActionBarActivity implements
             options.inSampleSize = 1;
             transactionImage = BitmapFactory.decodeFile(fileUri.getPath(),
                     options);
-            final Bitmap bitmap=transactionImage;
             if(transactionImage.getWidth()> transactionImage.getHeight()){
                 Matrix matrix = new Matrix();
                 matrix.postRotate(-90);

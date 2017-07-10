@@ -29,7 +29,7 @@ public class AccountInfo extends Fragment {
     public TextView mUsername;
     public TextView mAmount;
     public TextView mLast;
-    private static String ACCOUNT_URL= "http://192.168.1.11:8080/android/account.php";
+    private static String ACCOUNT_URL= "http://192.168.1.14:8080/android/account.php";
     ProgressDialog pDialog;
     getUserInterface mListener;
 
@@ -96,14 +96,14 @@ public class AccountInfo extends Fragment {
                             JSONObject lT = new JSONObject(jsonResponse.getString("last"));
                             if(lT.getString("sender").equals(jsonResponse.getString("username")))
                                 mLast.setText("Last Transaction: You sent "+
-                                lT.getString("receiver")+
-                                " Rs."+lT.getString("amount_sent")+
-                                " on \n"+lT.getString("date"));
+                                        " Rs."+lT.getString("amount_sent")+
+                                " to "+lT.getString("receiver")+
+                                " on\n"+lT.getString("date"));
                             else
                                 mLast.setText("Last Transaction: "+
                                         lT.getString("sender")+
                                         " sent you Rs."+lT.getString("amount_sent")+
-                                        " on \n"+lT.getString("date"));
+                                        " on\n"+lT.getString("date"));
                         } catch (JSONException e) {
                             e.printStackTrace();
                             pDialog.hide();
