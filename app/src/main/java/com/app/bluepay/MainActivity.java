@@ -6,12 +6,10 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
-import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.content.FileProvider;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
@@ -19,7 +17,6 @@ import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -29,20 +26,14 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
-import com.app.bluepay.AcceptThread;
-import com.app.bluepay.ConnectThread;
-import com.app.bluepay.Home;
-import com.app.bluepay.login;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -74,14 +65,8 @@ public class MainActivity extends ActionBarActivity implements
     private static String LOGIN_URL= "http://192.168.1.14:8080/android/login.php";
     private static String TRANS_URL= "http://192.168.1.14:8080/android/transaction.php";
 
-    //Camera code
-    private static final int CAMERA_CAPTURE_IMAGE_REQUEST_CODE = 100;
-    private static final int CAMERA_CAPTURE_VIDEO_REQUEST_CODE = 200;
-    public static final int MEDIA_TYPE_IMAGE = 1;
-    public static final int MEDIA_TYPE_VIDEO = 2;
-
     // directory name to store captured images and videos
-    private static final String IMAGE_DIRECTORY_NAME = "Bluepay";
+    private static final String DIRECTORY_NAME = "Bluepay";
     private Uri fileUri; // file url to store image/video
     //Camera code end
 
@@ -460,7 +445,6 @@ public class MainActivity extends ActionBarActivity implements
     }
 
     public void acceptPressed(View view) {
-        //captureImage();
         transactionFinal();
         if(dialog!=null){
             dialog.dismiss();
@@ -475,126 +459,16 @@ public class MainActivity extends ActionBarActivity implements
         }
     }
 
-    private void captureImage() {
-        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        fileUri = getOutputMediaFileUri(MEDIA_TYPE_IMAGE);
-        intent.putExtra(MediaStore.EXTRA_OUTPUT, fileUri);
-        // start the image capture Intent
-        startActivityForResult(intent, CAMERA_CAPTURE_IMAGE_REQUEST_CODE);
-    }
-
-    private void previewCapturedImage() {
-        try {
-            // hide video preview
-            // bimatp factory
-            BitmapFactory.Options options = new BitmapFactory.Options();
-            // downsizing image as it throws OutOfMemory Exception for larger
-            // images
-            options.inSampleSize = 1;
-            transactionImage = BitmapFactory.decodeFile(fileUri.getPath(),
-                    options);
-            if(transactionImage.getWidth()> transactionImage.getHeight()){
-                Matrix matrix = new Matrix();
-                matrix.postRotate(-90);
-                transactionImage = Bitmap.createBitmap(transactionImage, 0, 0, transactionImage.getWidth(),
-                        transactionImage.getHeight(), matrix, true);
-            }
-            //transaction occurs when image is saved
-            //transactionFinal();
-        } catch (NullPointerException e) {
-            e.printStackTrace();
-        }
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        // if the result is capturing Image
-        if (requestCode == CAMERA_CAPTURE_IMAGE_REQUEST_CODE) {
-            if (resultCode == RESULT_OK) {
-                // successfully captured the image
-                // display it in image view
-                pDialog=new ProgressDialog(this);
-                pDialog.setMessage("Processing transaction..");
-                pDialog.setCancelable(false);
-                pDialog.show();
-                previewCapturedImage();
-            } else if (resultCode == RESULT_CANCELED) {
-                // user cancelled Image capture
-                Toast.makeText(getApplicationContext(),
-                        "User cancelled image capture", Toast.LENGTH_SHORT)
-                        .show();
-            } else {
-                // failed to capture image
-                Toast.makeText(getApplicationContext(),
-                        "Sorry! Failed to capture image", Toast.LENGTH_SHORT)
-                        .show();
-            }
-        }
-    }
-
-    /**
-     * Creating file uri to store image/video
-     */
-    public Uri getOutputMediaFileUri(int type) {
-        return Uri.fromFile(getOutputMediaFile(type));
-    }
-
-    /*
-     * returning image / video
-     */
-    private static File getOutputMediaFile(int type) {
-
-        // External sdcard location
-        File mediaStorageDir = new File(
-                Environment
-                        .getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),
-                IMAGE_DIRECTORY_NAME);
-
-        // Create the storage directory if it does not exist
-        if (!mediaStorageDir.exists()) {
-            if (!mediaStorageDir.mkdirs()) {
-                Log.d(IMAGE_DIRECTORY_NAME, "Oops! Failed create "
-                        + IMAGE_DIRECTORY_NAME + " directory");
-                return null;
-            }
-        }
-
-        // Create a media file name
-        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss",
-                Locale.getDefault()).format(new Date());
-        File mediaFile;
-        if (type == MEDIA_TYPE_IMAGE) {
-            mediaFile = new File(mediaStorageDir.getPath() + File.separator
-                    + "IMG_" + timeStamp + ".jpg");
-        } else if (type == MEDIA_TYPE_VIDEO) {
-            mediaFile = new File(mediaStorageDir.getPath() + File.separator
-                    + "VID_" + timeStamp + ".mp4");
-        } else {
-            return null;
-        }
-
-        return mediaFile;
-    }
-
-    //Use this method to convert image to string to be sent to server
-    public String imageToString(Bitmap bitmap){
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos); //bm is the bitmap object
-        byte[] b = baos.toByteArray();
-        String encodedImage = Base64.encodeToString(b, Base64.DEFAULT);
-        return encodedImage;
-    }
-
     public File getNewFile(){
         File mediaStorageDir = new File(
                 Environment
                         .getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS),
-                IMAGE_DIRECTORY_NAME);
+                DIRECTORY_NAME);
         // Create the storage directory if it does not exist
         if (!mediaStorageDir.exists()) {
             if (!mediaStorageDir.mkdirs()) {
-                Log.d(IMAGE_DIRECTORY_NAME, "Oops! Failed create "
-                        + IMAGE_DIRECTORY_NAME + " directory");
+                Log.d(DIRECTORY_NAME, "Oops! Failed create "
+                        + DIRECTORY_NAME + " directory");
                 return null;
             }
         }
@@ -602,7 +476,7 @@ public class MainActivity extends ActionBarActivity implements
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss",
                 Locale.getDefault()).format(new Date());
         File file;
-        file = new File(mediaStorageDir,IMAGE_DIRECTORY_NAME+timeStamp + ".txt");
+        file = new File(mediaStorageDir, DIRECTORY_NAME +timeStamp + ".txt");
         try {
             file.createNewFile();
         }
