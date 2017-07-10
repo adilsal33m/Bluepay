@@ -39,7 +39,11 @@ import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -115,7 +119,22 @@ public class MainActivity extends ActionBarActivity implements
 
     @Override
     public void displayMessage(String str) {
-        Toast.makeText(MainActivity.this, str, Toast.LENGTH_SHORT).show();
+        String[] strings = str.split("\\$");
+        switch (strings[0]) {
+            case "0":
+                Toast.makeText(MainActivity.this, strings[1], Toast.LENGTH_SHORT).show();
+                break;
+            case "1":
+                try{
+                    JSONObject jsonResponse = new JSONObject(strings[1]);
+                    writeToFile(jsonResponse.getString("last"));
+                    Toast.makeText(MainActivity.this,jsonResponse.getString("message"), Toast.LENGTH_SHORT).show();
+                }
+                catch (JSONException e){
+
+                }
+                break;
+    }
     }
 
 
@@ -387,11 +406,12 @@ public class MainActivity extends ActionBarActivity implements
                             JSONObject jsonResponse = new JSONObject(response);
                             if(jsonResponse.get("success").equals("1")){
                                 Toast.makeText(getApplicationContext(),jsonResponse.getString("message"), Toast.LENGTH_LONG).show();
-                                bluetoothFragment.mAcceptThread.write(jsonResponse.getString("message").getBytes());
+                                bluetoothFragment.mAcceptThread.write(("1$"+jsonResponse.toString()).getBytes());
+                                writeToFile(jsonResponse.getString("last"));
                             }
                             else{
                                 Toast.makeText(getApplicationContext(),jsonResponse.getString("message"), Toast.LENGTH_SHORT).show();
-                                bluetoothFragment.mAcceptThread.write(jsonResponse.getString("message").getBytes());
+                                bluetoothFragment.mAcceptThread.write(("0$"+jsonResponse.getString("message")).getBytes());
                             }
 
                         } catch (JSONException e) {
@@ -418,7 +438,7 @@ public class MainActivity extends ActionBarActivity implements
                 params.put("sender", account);
                 params.put("receiver", client);
                 params.put("amount", amount);
-                params.put("image",imageToString(transactionImage));
+                //params.put("image",imageToString(transactionImage));
                 return params;
             }
         };
@@ -440,7 +460,8 @@ public class MainActivity extends ActionBarActivity implements
     }
 
     public void acceptPressed(View view) {
-        captureImage();
+        //captureImage();
+        transactionFinal();
         if(dialog!=null){
             dialog.dismiss();
             dialog=null;
@@ -479,7 +500,7 @@ public class MainActivity extends ActionBarActivity implements
                         transactionImage.getHeight(), matrix, true);
             }
             //transaction occurs when image is saved
-            transactionFinal();
+            //transactionFinal();
         } catch (NullPointerException e) {
             e.printStackTrace();
         }
@@ -562,6 +583,45 @@ public class MainActivity extends ActionBarActivity implements
         byte[] b = baos.toByteArray();
         String encodedImage = Base64.encodeToString(b, Base64.DEFAULT);
         return encodedImage;
+    }
+
+    public File getNewFile(){
+        File mediaStorageDir = new File(
+                Environment
+                        .getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS),
+                IMAGE_DIRECTORY_NAME);
+        // Create the storage directory if it does not exist
+        if (!mediaStorageDir.exists()) {
+            if (!mediaStorageDir.mkdirs()) {
+                Log.d(IMAGE_DIRECTORY_NAME, "Oops! Failed create "
+                        + IMAGE_DIRECTORY_NAME + " directory");
+                return null;
+            }
+        }
+
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss",
+                Locale.getDefault()).format(new Date());
+        File file;
+        file = new File(mediaStorageDir,IMAGE_DIRECTORY_NAME+timeStamp + ".txt");
+        try {
+            file.createNewFile();
+        }
+        catch(IOException e){
+
+        }
+        return file;
+    }
+
+    private void writeToFile(String data) {
+        try {
+            File f= getNewFile();
+            OutputStreamWriter outputStreamWriter = new OutputStreamWriter(new FileOutputStream(f));
+            outputStreamWriter.write(data);
+            outputStreamWriter.close();
+        }
+        catch (IOException e) {
+            Log.e("Exception", "File write failed: " + e.toString());
+        }
     }
 }
 

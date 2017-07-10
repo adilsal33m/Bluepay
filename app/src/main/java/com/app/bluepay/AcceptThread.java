@@ -69,7 +69,7 @@ public class AcceptThread extends Thread {
                 cancel();
                 mConnectedThread=new AcceptThread.ConnectedThread(socket);
                 mConnectedThread.start();
-                mConnectedThread.write("Client Connected..".getBytes());
+                mConnectedThread.write("0$Client Connected..".getBytes());
                 break;
             }
         }
