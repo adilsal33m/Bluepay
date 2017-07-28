@@ -61,7 +61,6 @@ public class MainActivity extends ActionBarActivity implements
     public login newFragment;
     public aboutUs aboutFragment;
     public bluetoothConnection bluetoothFragment;
-    public Bitmap transactionImage;
     private static String DESKEY= "neduniversityofengineeringandtechnology";
     private static String LOGIN_URL= "http://192.168.1.3:8080/android/login.php";
     private static String TRANS_URL= "http://192.168.1.3:8080/android/transaction.php";
@@ -340,6 +339,7 @@ public class MainActivity extends ActionBarActivity implements
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         error.printStackTrace();
+                        Log.d("SenderTable",error.toString());
                         pDialog.hide();
                         Toast.makeText(getApplicationContext(),"Unable to connect to server!", Toast.LENGTH_SHORT).show();
                     }

@@ -99,13 +99,13 @@ public class AccountInfo extends Fragment {
                                         " Rs."+lT.getString("amount_sent")+
                                 " to "+lT.getString("receiver")+
                                 " on\n"+lT.getString("date")+
-                                        "\nTransaction#: "+lT.getString("id"));
+                                        "\nTransaction#: "+lT.getString("code"));
                             else
                                 mLast.setText("Last Transaction: "+
                                         lT.getString("sender")+
                                         " sent you Rs."+lT.getString("amount_sent")+
                                         " on\n"+lT.getString("date")+
-                                        "\nTransaction#: "+lT.getString("id"));
+                                        "\nTransaction#: "+lT.getString("code"));
                         } catch (JSONException e) {
                             e.printStackTrace();
                             pDialog.hide();
