@@ -46,6 +46,8 @@ public class Home extends Fragment {
             @Override
             public void onClick(View view) {
                 mCallback.About();
+                //AudioRecord record= new AudioRecord(getActivity());
+                //record.recorderPrepare();
             }
         });
 

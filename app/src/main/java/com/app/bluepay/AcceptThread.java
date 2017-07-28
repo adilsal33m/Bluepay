@@ -30,6 +30,7 @@ public class AcceptThread extends Thread {
 
     public interface updateUI{
         public void displayMessageServer(String str);
+        public String getAccount();
     };
 
     void registerCallback(Activity c){
@@ -69,7 +70,7 @@ public class AcceptThread extends Thread {
                 cancel();
                 mConnectedThread=new AcceptThread.ConnectedThread(socket);
                 mConnectedThread.start();
-                mConnectedThread.write("0$Client Connected..".getBytes());
+                mConnectedThread.write(("0$Client Connected..$"+mCallback.getAccount()).getBytes());
                 break;
             }
         }

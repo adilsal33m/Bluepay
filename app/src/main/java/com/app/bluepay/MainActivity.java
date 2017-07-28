@@ -55,6 +55,7 @@ public class MainActivity extends ActionBarActivity implements
     public String client=null;
     public String account=null;
     public String pass=null;
+    public String code=null;
     public String amount=null;
     public ProgressDialog pDialog;
     public login newFragment;
@@ -62,9 +63,9 @@ public class MainActivity extends ActionBarActivity implements
     public bluetoothConnection bluetoothFragment;
     public Bitmap transactionImage;
     private static String DESKEY= "neduniversityofengineeringandtechnology";
-    private static String LOGIN_URL= "http://192.168.1.14:8080/android/login.php";
-    private static String TRANS_URL= "http://192.168.1.14:8080/android/transaction.php";
-
+    private static String LOGIN_URL= "http://192.168.1.3:8080/android/login.php";
+    private static String TRANS_URL= "http://192.168.1.3:8080/android/transaction.php";
+    private static String SENDER_URL= "http://192.168.1.3:8080/android/sender.php";
     // directory name to store captured images and videos
     private static final String DIRECTORY_NAME = "Bluepay";
     private Uri fileUri; // file url to store image/video
@@ -108,42 +109,61 @@ public class MainActivity extends ActionBarActivity implements
         switch (strings[0]) {
             case "0":
                 Toast.makeText(MainActivity.this, strings[1], Toast.LENGTH_SHORT).show();
+                String msg=bluetoothFragment.message.toString();
+                msg=msg.substring(0,msg.length()-1)+",\"Receiver\":\""+strings[2]+"\"}";
+                try {
+                    updateSenderTable(new JSONObject(msg));
+                }
+                catch (JSONException e){
+                    e.printStackTrace();
+                }
+                //Electronic Certifcate
+                bluetoothFragment.mConnectThread.write(msg.getBytes());
+                writeToFile(msg);
                 break;
             case "1":
                 try{
                     JSONObject jsonResponse = new JSONObject(strings[1]);
-                    writeToFile(jsonResponse.getString("last"));
                     Toast.makeText(MainActivity.this,jsonResponse.getString("message"), Toast.LENGTH_SHORT).show();
                 }
                 catch (JSONException e){
 
                 }
                 break;
-    }
+        }
     }
 
 
     @Override
     public void displayMessageServer(String str) {
+        if(str.equals("getReceiver")){
+            Toast.makeText(this,"Client Connected...",Toast.LENGTH_SHORT).show();
+        }
+        else{
+        //Electronic Certifcate
+        writeToFile(str);
+        //Alert Dialog
         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
         LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View view = inflater.inflate(R.layout.fragment_dialog, null, false);
 
         try {
             JSONObject jsonObj = new JSONObject(str);
-            client= jsonObj.getString("User");
+            client= jsonObj.getString("Sender");
             amount= jsonObj.getString("Amount");
+            code= jsonObj.getString("Code");
         }
         catch(JSONException e){
             e.printStackTrace();
         }
 
         TextView anotherView = (TextView)view.findViewById(R.id.transaction_amount); //enter resource id
-        anotherView.setText( client+" has requested Rs."+amount);
+        anotherView.setText( client+" wishes to transfer Rs."+amount+" to your account.\nTransaction Code: "+code);
 
         dialogBuilder.setView(view);
         dialog = dialogBuilder.create();
         dialog.show();
+        }
     }
 
     @Override
@@ -269,13 +289,6 @@ public class MainActivity extends ActionBarActivity implements
         displayTitle(3);
     }
 
-
-
-        @Override
-    public String getClient() {
-        return client;
-    }
-
     @Override
     public String getAccount() {
         return account;
@@ -309,31 +322,52 @@ public class MainActivity extends ActionBarActivity implements
         }
     }
 
+    public void updateSenderTable(final JSONObject jsonObject) {
 
-    private void checkLogin(){
-/*       StringRequest stringRequest = new StringRequest(Request.Method.GET, LOGIN_URL,
+        pDialog = new ProgressDialog(this);
+        pDialog.setMessage("Loading...");
+        pDialog.show();
+
+        StringRequest postRequest = new StringRequest(Request.Method.POST, SENDER_URL,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
-
-                        // Result handling
-                        System.out.println(response);
-
+                            pDialog.hide();
+                            Log.d("SenderTable",response);
                     }
-                }, new Response.ErrorListener() {
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        error.printStackTrace();
+                        pDialog.hide();
+                        Toast.makeText(getApplicationContext(),"Unable to connect to server!", Toast.LENGTH_SHORT).show();
+                    }
+                }
+        ) {
             @Override
-            public void onErrorResponse(VolleyError error) {
-
-                // Error handling
-                System.out.println("Something went wrong!");
-                error.printStackTrace();
-
+            protected Map<String, String> getParams()
+            {
+                Map<String, String>  params = new HashMap<>();
+                // the POST parameters:
+                try {
+                    params.put("sender", jsonObject.getString("Sender"));
+                    params.put("code", jsonObject.getString("Code"));
+                    params.put("amount", jsonObject.getString("Amount"));
+                    params.put("receiver", jsonObject.getString("Receiver"));
+                }
+                catch(JSONException e){
+                    e.printStackTrace();
+                }
+                return params;
             }
-        });
+        };
+        Volley.newRequestQueue(this).add(postRequest);
 
-// Add the request to the queue
-        Volley.newRequestQueue(this).add(stringRequest);
-*/
+    }
+
+
+    private void checkLogin(){
         pDialog = new ProgressDialog(this);
         pDialog.setMessage("Loading...");
         pDialog.show();
@@ -392,7 +426,6 @@ public class MainActivity extends ActionBarActivity implements
                             if(jsonResponse.get("success").equals("1")){
                                 Toast.makeText(getApplicationContext(),jsonResponse.getString("message"), Toast.LENGTH_LONG).show();
                                 bluetoothFragment.mAcceptThread.write(("1$"+jsonResponse.toString()).getBytes());
-                                writeToFile(jsonResponse.getString("last"));
                             }
                             else{
                                 Toast.makeText(getApplicationContext(),jsonResponse.getString("message"), Toast.LENGTH_SHORT).show();
@@ -420,10 +453,10 @@ public class MainActivity extends ActionBarActivity implements
             {
                 Map<String, String>  params = new HashMap<>();
                 // the POST parameters:
-                params.put("sender", account);
-                params.put("receiver", client);
+                params.put("sender", client);
+                params.put("receiver", account);
                 params.put("amount", amount);
-                //params.put("image",imageToString(transactionImage));
+                params.put("code",code);
                 return params;
             }
         };
@@ -455,6 +488,7 @@ public class MainActivity extends ActionBarActivity implements
     public void cancelPressed(View view) {
         if(dialog!=null){
             dialog.dismiss();
+            Toast.makeText(this,"Transaction cancelled",Toast.LENGTH_SHORT).show();
             dialog=null;
         }
     }
@@ -489,8 +523,10 @@ public class MainActivity extends ActionBarActivity implements
     private void writeToFile(String data) {
         try {
             File f= getNewFile();
+            String timeStamp = new SimpleDateFormat("yyyy.MM.dd '|' HH:mm:ss z",
+                    Locale.getDefault()).format(new Date());
             OutputStreamWriter outputStreamWriter = new OutputStreamWriter(new FileOutputStream(f));
-            outputStreamWriter.write(data);
+            outputStreamWriter.write(data.substring(0,data.length()-1)+"\n\"TimeStamp\":\""+timeStamp+"\"}");
             outputStreamWriter.close();
         }
         catch (IOException e) {
