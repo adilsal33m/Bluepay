@@ -62,9 +62,9 @@ public class MainActivity extends ActionBarActivity implements
     public aboutUs aboutFragment;
     public bluetoothConnection bluetoothFragment;
     private static String DESKEY= "neduniversityofengineeringandtechnology";
-    private static String LOGIN_URL= "https://bluepay0.000webhostapp.com/android/login.php";
-    private static String TRANS_URL= "https://bluepay0.000webhostapp.com/android/transaction.php";
-    private static String SENDER_URL= "https://bluepay0.000webhostapp.com/android/sender.php";
+    private static String LOGIN_URL= "https://bluepay.000webhostapp.com/android/login.php";
+    private static String TRANS_URL= "https://bluepay.000webhostapp.com/android/transaction.php";
+    private static String SENDER_URL= "https://bluepay.000webhostapp.com/android/sender.php";
     // directory name to store captured images and videos
     private static final String DIRECTORY_NAME = "Bluepay";
     private Uri fileUri; // file url to store image/video
