@@ -29,7 +29,7 @@ public class AccountInfo extends Fragment {
     public TextView mUsername;
     public TextView mAmount;
     public TextView mLast;
-    private static String ACCOUNT_URL= "http://192.168.1.3:8080/android/account.php";
+    private static String ACCOUNT_URL= "https://bluepay0.000webhostapp.com/android/account.php";
     ProgressDialog pDialog;
     getUserInterface mListener;
 
