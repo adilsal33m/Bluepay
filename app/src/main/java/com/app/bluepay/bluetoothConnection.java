@@ -170,11 +170,7 @@ public class bluetoothConnection extends Fragment {
                         alertDialog.show();
                     } else {
 
-                        mConnectThread.cancel();
-                        mConnectButton.setText("Connect");
-                        mRefreshButton.setEnabled(true);
-                        mSpinner.setEnabled(true);
-                        mOpenConnection.setEnabled(true);
+                        resetConnectButton();
                     }
                 }
                 else{
@@ -213,11 +209,7 @@ public class bluetoothConnection extends Fragment {
                         mConnectButton.setEnabled(false);
                     }
                     else{
-                        mAcceptThread.cancel();
-                        mOpenConnection.setText("Open Connection");
-                        mRefreshButton.setEnabled(true);
-                        mSpinner.setEnabled(true);
-                        mConnectButton.setEnabled(true);
+                        resetOpenConnectionButton();
                     }
                 }
 
@@ -272,6 +264,7 @@ public class bluetoothConnection extends Fragment {
 
 
 
+
     private void discoverDevices(){
         if(mBluetoothAdapter.isDiscovering())
             mBluetoothAdapter.cancelDiscovery();
@@ -286,6 +279,30 @@ public class bluetoothConnection extends Fragment {
                 R.layout.spinner_item,conn);
         mSpinner.setAdapter(adapter);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+    }
+
+    public void resetOpenConnectionButton(){
+
+        if(mConnectButton != null){
+            if(mAcceptThread != null)
+                mAcceptThread.cancel();
+            mOpenConnection.setText("Open Connection");
+            mRefreshButton.setEnabled(true);
+            mSpinner.setEnabled(true);
+            mConnectButton.setEnabled(true);
+        }
+    }
+
+    public void resetConnectButton(){
+
+        if(mConnectButton != null){
+            if(mConnectThread != null)
+                mConnectThread.cancel();
+            mConnectButton.setText("Connect");
+            mRefreshButton.setEnabled(true);
+            mSpinner.setEnabled(true);
+            mOpenConnection.setEnabled(true);
+        }
     }
 
     private void bluetoothConnect(){

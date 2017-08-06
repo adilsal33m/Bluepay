@@ -124,6 +124,7 @@ public class MainActivity extends ActionBarActivity implements
                 try{
                     JSONObject jsonResponse = new JSONObject(strings[1]);
                     Toast.makeText(MainActivity.this,jsonResponse.getString("message"), Toast.LENGTH_SHORT).show();
+                    bluetoothFragment.resetConnectButton();
                 }
                 catch (JSONException e){
 
@@ -424,6 +425,7 @@ public class MainActivity extends ActionBarActivity implements
                         try {
                             JSONObject jsonResponse = new JSONObject(response);
                             if(jsonResponse.get("success").equals("1")){
+                                Log.d("Transaction",response);
                                 Toast.makeText(getApplicationContext(),jsonResponse.getString("message"), Toast.LENGTH_LONG).show();
                                 bluetoothFragment.mAcceptThread.write(("1$"+jsonResponse.toString()).getBytes());
                             }
@@ -435,8 +437,7 @@ public class MainActivity extends ActionBarActivity implements
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
-                        onBackPressed();
-                        makeTransaction();
+                        bluetoothFragment.resetOpenConnectionButton();
                     }
                 },
                 new Response.ErrorListener() {
