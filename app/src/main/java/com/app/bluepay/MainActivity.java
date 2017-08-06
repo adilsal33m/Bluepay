@@ -429,7 +429,7 @@ public class MainActivity extends ActionBarActivity implements
                             }
                             else{
                                 Toast.makeText(getApplicationContext(),jsonResponse.getString("message"), Toast.LENGTH_SHORT).show();
-                                bluetoothFragment.mAcceptThread.write(("0$"+jsonResponse.getString("message")).getBytes());
+                                bluetoothFragment.mAcceptThread.write(("1$"+jsonResponse.toString()).getBytes());
                             }
 
                         } catch (JSONException e) {
