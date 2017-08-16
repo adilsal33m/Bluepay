@@ -55,6 +55,8 @@ public class MainActivity extends ActionBarActivity implements
         AccountInfo.getUserInterface{
 
     private static final int MY_SOCKET_TIMEOUT_MS = 300000;
+    private static final int BTLE_REQUEST_CODE=2;
+    private static final int WRITEFILE_REQUEST_CODE=3;
     private AlertDialog dialog;
     public String client=null;
     public String account=null;
@@ -533,7 +535,7 @@ public class MainActivity extends ActionBarActivity implements
                     writeFileDetails(data);
                 } else {
                     temp = data;
-                    ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
+                    ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, WRITEFILE_REQUEST_CODE);
                 }
             }
             else {
@@ -558,7 +560,7 @@ public class MainActivity extends ActionBarActivity implements
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if(grantResults[0]== PackageManager.PERMISSION_GRANTED){
+        if(grantResults[0]== PackageManager.PERMISSION_GRANTED && requestCode == WRITEFILE_REQUEST_CODE){
             //resume tasks needing this permission
             writeFileDetails(temp);
         }

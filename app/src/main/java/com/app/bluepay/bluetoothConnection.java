@@ -1,17 +1,25 @@
 package com.app.bluepay;
 
 
+import android.Manifest;
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
+import android.bluetooth.le.BluetoothLeScanner;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -25,9 +33,9 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
-
 import org.json.JSONObject;
 
+import java.security.Permission;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -46,6 +54,7 @@ public class bluetoothConnection extends Fragment {
     private EditText mAmount;
     private Spinner mSpinner;
     public BluetoothAdapter mBluetoothAdapter;
+    public BluetoothLeScanner mBluetoothLeScanner;
     public BluetoothDevice mBluetoothDevice;
     public ConnectThread mConnectThread;
     public AcceptThread mAcceptThread;
@@ -112,7 +121,6 @@ public class bluetoothConnection extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         mAmount=(EditText)getActivity().findViewById(R.id.editText);
-
         mConnectButton= (Button)getActivity().findViewById(R.id.connect);
         mConnectButton.setOnClickListener(new View.OnClickListener(){
 
@@ -180,6 +188,7 @@ public class bluetoothConnection extends Fragment {
             }
         });
 
+
         mOpenConnection= (Button)getActivity().findViewById(R.id.openConnection);
         mOpenConnection.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -224,12 +233,26 @@ public class bluetoothConnection extends Fragment {
             public void onClick(View view) {
                 Animation animation = AnimationUtils.loadAnimation(getActivity(),
                         R.anim.touch);
-
                 mRefreshButton.startAnimation(animation);
                 mBluetoothConnections.clear();
                 bluetoothConnect();
                 fillList();
-                discoverDevices();
+                //Check if Marshmallow
+                if(Build.VERSION.SDK_INT >= 23){
+                    //This if condition requests permissions else start scanning
+                    if (ActivityCompat.checkSelfPermission(getContext(),
+                            android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED ||
+                            ActivityCompat.checkSelfPermission(getContext(),
+                                    Manifest.permission.BLUETOOTH_ADMIN) != PackageManager.PERMISSION_GRANTED ||
+                            ActivityCompat.checkSelfPermission(getContext(),
+                                    android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                        ActivityCompat.requestPermissions(getActivity(),
+                                new String[]{android.Manifest.permission.ACCESS_COARSE_LOCATION,
+                                        android.Manifest.permission.ACCESS_FINE_LOCATION,
+                                Manifest.permission.BLUETOOTH_ADMIN},1);
+                    }
+                }
+                    discoverDevices();
             }
         });
 
@@ -242,8 +265,6 @@ public class bluetoothConnection extends Fragment {
         });
 
 
-
-//Problem Here
         mSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -261,8 +282,6 @@ public class bluetoothConnection extends Fragment {
             }
         });
     }
-
-
 
 
     private void discoverDevices(){
@@ -323,6 +342,12 @@ public class bluetoothConnection extends Fragment {
         }
     }
 
+    @TargetApi(23)
+    private void getBluetoothLE(){
+        if(mBluetoothAdapter!=null){
+            mBluetoothLeScanner=mBluetoothAdapter.getBluetoothLeScanner();
+        }
+    }
 
     bluetoothConnection.changeFragment mCallback;
 
