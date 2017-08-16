@@ -1,14 +1,18 @@
 package com.app.bluepay;
 
+import android.Manifest;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
@@ -57,6 +61,7 @@ public class MainActivity extends ActionBarActivity implements
     public String pass=null;
     public String code=null;
     public String amount=null;
+    private String temp=null; //to be used for Marshmallow
     public ProgressDialog pDialog;
     public login newFragment;
     public aboutUs aboutFragment;
@@ -445,7 +450,7 @@ public class MainActivity extends ActionBarActivity implements
                     public void onErrorResponse(VolleyError error) {
                         error.printStackTrace();
                         pDialog.hide();
-                        Toast.makeText(getApplicationContext(),error.toString(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getApplicationContext(),"Please check your internet connection.", Toast.LENGTH_SHORT).show();
                     }
                 }
         ) {
@@ -522,16 +527,40 @@ public class MainActivity extends ActionBarActivity implements
     }
 
     private void writeToFile(String data) {
+            if (Build.VERSION.SDK_INT >= 23) {
+                if (checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                        == PackageManager.PERMISSION_GRANTED) {
+                    writeFileDetails(data);
+                } else {
+                    temp = data;
+                    ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
+                }
+            }
+            else {
+                writeFileDetails(data);
+            }
+        }
+
+    private void writeFileDetails(String data){
+        File f = getNewFile();
         try {
-            File f= getNewFile();
             String timeStamp = new SimpleDateFormat("yyyy.MM.dd '|' HH:mm:ss z",
                     Locale.getDefault()).format(new Date());
             OutputStreamWriter outputStreamWriter = new OutputStreamWriter(new FileOutputStream(f));
-            outputStreamWriter.write(data.substring(0,data.length()-1)+"\n\"TimeStamp\":\""+timeStamp+"\"}");
+            outputStreamWriter.write(data.substring(0, data.length() - 1) + "\n\"TimeStamp\":\"" + timeStamp + "\"}");
             outputStreamWriter.close();
         }
-        catch (IOException e) {
-            Log.e("Exception", "File write failed: " + e.toString());
+        catch(IOException e){
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if(grantResults[0]== PackageManager.PERMISSION_GRANTED){
+            //resume tasks needing this permission
+            writeFileDetails(temp);
         }
     }
 }
