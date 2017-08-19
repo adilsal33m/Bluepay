@@ -116,15 +116,24 @@ public class MainActivity extends ActionBarActivity implements
             case "0":
                 Toast.makeText(MainActivity.this, strings[1], Toast.LENGTH_SHORT).show();
                 String msg=bluetoothFragment.message.toString();
-                msg=msg.substring(0,msg.length()-1)+",\"Receiver\":\""+strings[2]+"\"}";
                 try {
-                    updateSenderTable(new JSONObject(msg));
+                    //Add receiver name to string
+                    JSONObject obj = new JSONObject(msg);
+                    obj.accumulate("Receiver",strings[2]);
+                    updateSenderTable(obj);
+                    msg=obj.toString();
+                    bluetoothFragment.mConnectThread.write(msg.getBytes());
+                    //New Object created as previous object is referenced to update Sender Table function
+                    JSONObject objToFile =  new JSONObject(obj.toString());
+                    //Remove Code from string to be written in file
+                    objToFile.remove("Code");
+                    msg=objToFile.toString();
+
                 }
                 catch (JSONException e){
-                    e.printStackTrace();
+
                 }
                 //Electronic Certifcate
-                bluetoothFragment.mConnectThread.write(msg.getBytes());
                 writeToFile(msg);
                 break;
             case "1":
@@ -147,8 +156,6 @@ public class MainActivity extends ActionBarActivity implements
             Toast.makeText(this,"Client Connected...",Toast.LENGTH_SHORT).show();
         }
         else{
-        //Electronic Certifcate
-        writeToFile(str);
         //Alert Dialog
         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
         LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -159,13 +166,19 @@ public class MainActivity extends ActionBarActivity implements
             client= jsonObj.getString("Sender");
             amount= jsonObj.getString("Amount");
             code= jsonObj.getString("Code");
+
+            //Remove transaction code
+            jsonObj.remove("Code");
+            str = jsonObj.toString();
+            //Electronic Certifcate
+            writeToFile(str);
         }
         catch(JSONException e){
             e.printStackTrace();
         }
 
         TextView anotherView = (TextView)view.findViewById(R.id.transaction_amount); //enter resource id
-        anotherView.setText( client+" wishes to transfer Rs."+amount+" to your account.\nTransaction Code: "+code);
+        anotherView.setText( client+" wishes to transfer Rs."+amount+" to your account.");
 
         dialogBuilder.setView(view);
         dialog = dialogBuilder.create();
@@ -497,6 +510,16 @@ public class MainActivity extends ActionBarActivity implements
         if(dialog!=null){
             dialog.dismiss();
             Toast.makeText(this,"Transaction cancelled",Toast.LENGTH_SHORT).show();
+            JSONObject obj= new JSONObject();
+            try {
+                obj.accumulate("message", "Transaction cancelled by receiver!");
+            }
+            catch (JSONException e){
+                e.printStackTrace();
+            }
+            //Send msg to sender that transaction has been cancelled
+            bluetoothFragment.mAcceptThread.write(("1$"+obj.toString()).getBytes());
+            bluetoothFragment.resetOpenConnectionButton();
             dialog=null;
         }
     }
@@ -514,11 +537,11 @@ public class MainActivity extends ActionBarActivity implements
                 return null;
             }
         }
-
-        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss",
-                Locale.getDefault()).format(new Date());
+        //Timestamp previously used to name new files
+        //String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss",
+        //        Locale.getDefault()).format(new Date());
         File file;
-        file = new File(mediaStorageDir, DIRECTORY_NAME +timeStamp + ".txt");
+        file = new File(mediaStorageDir, DIRECTORY_NAME + ".txt");
         try {
             file.createNewFile();
         }
