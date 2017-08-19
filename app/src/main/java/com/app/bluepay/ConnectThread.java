@@ -15,11 +15,6 @@ import java.io.OutputStream;
 import java.util.UUID;
 
 
-/**
- * Created by Adil Saleem on 23-Mar-17.
- */
-
-
 public class ConnectThread extends Thread {
 
     public interface updateUI{

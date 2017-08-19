@@ -1,9 +1,5 @@
 package com.app.bluepay;
 
-/**
- * Created by Adil Saleem on 09-Apr-17.
- */
-
 import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
 import javax.crypto.SecretKeyFactory;

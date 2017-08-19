@@ -14,10 +14,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.UUID;
 
-/**
- * Created by Adil Saleem on 24-Mar-17.
- */
-
 public class AcceptThread extends Thread {
     private  BluetoothServerSocket mmServerSocket;
     private  BluetoothAdapter mBluetoothAdapter;
