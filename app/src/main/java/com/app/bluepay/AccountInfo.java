@@ -139,7 +139,7 @@ public class AccountInfo extends Fragment {
 
     private ArrayList<String> fillFinalList(ArrayList<String> list, JSONArray obj){
 
-        for (int i=obj.length()-1;i>-1;i--) {
+        for (int i=0;i<obj.length();i++) {
             try {
                 String[] temp = obj.getString(i).split(",");
                 String msg=null;
