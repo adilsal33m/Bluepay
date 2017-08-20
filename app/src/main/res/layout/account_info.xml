@@ -8,7 +8,7 @@
               android:background="#404040"
              tools:context="com.app.bluepay.AccountInfo">
     <ImageView
-        android:layout_height="250dp"
+        android:layout_height="200dp"
         android:layout_width="match_parent"
         android:scaleX="0.75"
         android:scaleY="0.75"
@@ -59,16 +59,21 @@
             android:layout_marginLeft="16dp"
             android:layout_marginRight="16dp"/>
     </LinearLayout>
-
     <TextView
+        android:layout_width="match_parent"
+        android:gravity="center"
+        android:layout_height="wrap_content"
+        android:text="@string/transactionToday"
+        android:textColor="@color/colorPrimary"
+        android:textSize="24sp"
+        android:padding="8dp"/>
+    <ListView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textSize="18sp"
         android:padding="8dp"
         android:textAlignment="center"
         android:id="@+id/account_info_last"
-        android:background="@drawable/text_shape_2"
-        android:textColor="@android:color/white"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp"/>
+        android:layout_marginLeft="0dp"
+        android:layout_marginRight="0dp"/>
 </LinearLayout>

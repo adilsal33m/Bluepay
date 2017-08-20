@@ -9,6 +9,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -18,17 +20,20 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 public class AccountInfo extends Fragment {
 
     public TextView mUsername;
     public TextView mAmount;
-    public TextView mLast;
+    public ListView mLast;
     private static String ACCOUNT_URL= "https://bluepay.000webhostapp.com/android/account.php";
     ProgressDialog pDialog;
     getUserInterface mListener;
@@ -62,7 +67,7 @@ public class AccountInfo extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         mUsername = (TextView)getActivity().findViewById(R.id.account_info_username);
         mAmount = (TextView)getActivity().findViewById(R.id.account_info_amount);
-        mLast = (TextView)getActivity().findViewById(R.id.account_info_last);
+        mLast = (ListView)getActivity().findViewById(R.id.account_info_last);
         getAccountInfo();
     }
 
@@ -93,19 +98,13 @@ public class AccountInfo extends Fragment {
                             JSONObject jsonResponse = new JSONObject(response);
                             mUsername.setText(jsonResponse.getString("username"));
                             mAmount.setText("Rs."+jsonResponse.getString("amount"));
-                            JSONObject lT = new JSONObject(jsonResponse.getString("last"));
-                            if(lT.getString("sender").equals(jsonResponse.getString("username")))
-                                mLast.setText("Last Transaction: You sent "+
-                                        " Rs."+lT.getString("amount_sent")+
-                                " to "+lT.getString("receiver")+
-                                " on\n"+lT.getString("date")+
-                                        "\nTransaction#: "+lT.getString("code"));
-                            else
-                                mLast.setText("Last Transaction: "+
-                                        lT.getString("sender")+
-                                        " sent you Rs."+lT.getString("amount_sent")+
-                                        " on\n"+lT.getString("date")+
-                                        "\nTransaction#: "+lT.getString("code"));
+                            JSONArray lT = new JSONArray(jsonResponse.getString("last"));
+                            ArrayList<String> lastTransactions= new ArrayList<String>();
+                            lastTransactions = fillFinalList(lastTransactions,lT);
+                            ArrayAdapter<String> mLastArrayAdapter= new ArrayAdapter<String>(getActivity(),
+                                    R.layout.list_item,
+                                    lastTransactions);
+                            mLast.setAdapter(mLastArrayAdapter);
                         } catch (JSONException e) {
                             e.printStackTrace();
                             pDialog.hide();
@@ -138,6 +137,30 @@ public class AccountInfo extends Fragment {
         public void closeAccountInfo();
     }
 
+    private ArrayList<String> fillFinalList(ArrayList<String> list, JSONArray obj){
+
+        for (int i=obj.length()-1;i>-1;i--) {
+            try {
+                String[] temp = obj.getString(i).split(",");
+                String msg=null;
+                if(temp[0].equals(mListener.getUsername())){
+                    msg = "You sent Rs."+temp[2]+" to "+temp[1]+" on\n"+
+                            temp[4].substring(0,temp[4].length()-1)+
+                            "\nTransaction Code: "+temp[3];
+                }
+                else{
+                    msg = temp[1]+" sent you Rs."+temp[2]+" on\n"+
+                            temp[4].substring(0,temp[4].length()-1)+
+                            "\nTransaction Code: "+temp[3];
+                }
+                list.add(msg);
+            }
+            catch (JSONException e){
+                e.printStackTrace();
+            }
+        }
+        return list;
+    }
     @Override
     public void onStop() {
         super.onStop();
