@@ -141,7 +141,11 @@ public class AccountInfo extends Fragment {
 
         for (int i=0;i<obj.length();i++) {
             try {
-                String[] temp = obj.getString(i).split(",");
+                String str = obj.getString(i);
+                str=str.replace("[","");
+                str=str.replace("]","");
+                str=str.replace("\"","");
+                String[] temp = str.split(",");
                 String msg=null;
                 if(temp[0].equals(mListener.getUsername())){
                     msg = "You sent Rs."+temp[2]+" to "+temp[1]+" on\n"+
