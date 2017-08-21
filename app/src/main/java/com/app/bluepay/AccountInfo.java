@@ -149,7 +149,7 @@ public class AccountInfo extends Fragment {
                             "\nTransaction Code: "+temp[3];
                 }
                 else{
-                    msg = temp[1]+" sent you Rs."+temp[2]+" on\n"+
+                    msg = temp[0]+" sent you Rs."+temp[2]+" on\n"+
                             temp[4].substring(0,temp[4].length()-1)+
                             "\nTransaction Code: "+temp[3];
                 }

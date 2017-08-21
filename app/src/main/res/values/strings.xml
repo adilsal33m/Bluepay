@@ -28,5 +28,5 @@
     <string name="accountInfo">Account Info</string>
     <string name="getAccountInfo">Get Details</string>
     <string name="amount">Amount</string>
-    <string name="transactionToday">Transactions Made Today</string>
+    <string name="transactionToday">Recent Transactions</string>
 </resources>
